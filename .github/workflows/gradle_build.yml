@@ -22,8 +22,12 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
-    - name: Build APK with Gradle
+    - name: Inject Repositories & Build
       run: |
+        # Сохраняем init-скрипт для подтягивания плагинов Google/Maven
+        mkdir -p ~/.gradle
+        echo "gradle.projectsLoaded { rootProject { buildscript { repositories { google(); mavenCentral(); gradlePluginPortal() } } } }" > ~/.gradle/init.gradle
+        
         gradle wrapper --gradle-version 8.5
         ./gradlew assembleDebug --stacktrace
 
@@ -32,3 +36,4 @@ jobs:
       with:
         name: tg-ws-proxy-apk
         path: '**/*.apk'
+        
